@@ -72,6 +72,8 @@ class App extends React.Component<{}, IappState> {
       sheetsDdata[sheetName] = formulae;
     });
 
+    window.console.log(sheetsDdata[this.workBook.SheetNames[0]][0]);
+
     const definition: object[] = [] ;
 
     for (const k in sheetsDdata[this.workBook.SheetNames[0]][0]) {
@@ -99,21 +101,11 @@ class App extends React.Component<{}, IappState> {
       }
     }
 
-sheetsDdata[this.workBook.SheetNames[0]].forEach((e: any, i: any) => {
-  e.key = i;
-});
-
-    // const definition = sheetsDdata[this.workBook.SheetNames[0]][0].map((value: any, index: any) => {
-    //   return {
-    //     dataIndex: index,
-    //     key: index,
-    //     title: value
-    //   }
-    // });
+    sheetsDdata[this.workBook.SheetNames[0]].forEach((e: any, i: any) => {
+      e.key = i;
+    });
 
     window.console.log(definition[0]);
-
-    // window.console.log(sheetsDdata[this.workBook.SheetNames[0]].slice(1));
 
     this.setState({
       dataSource: sheetsDdata[this.workBook.SheetNames[0]].slice(1),
@@ -145,6 +137,7 @@ sheetsDdata[this.workBook.SheetNames[0]].forEach((e: any, i: any) => {
             <input style={{ display: 'none' }} ref={r => this.inputRef = r} type="file" onChange={this.onChange} />
           </div>
           <Divider dashed={true} />
+
           <Table dataSource={ this.state.dataSource } columns={ this.state.definition } rowKey='key'/>
         </Layout.Content>
       </Layout>
