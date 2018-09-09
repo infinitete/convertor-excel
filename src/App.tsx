@@ -16,7 +16,8 @@ class App extends React.Component {
 
     this.state = {
       sheetNames: [],
-      workBook: null
+      sheetsData: null,
+      workBook: null,
     }
   }
 
@@ -29,8 +30,6 @@ class App extends React.Component {
     if (e.target == null || e.target.files.length === 0) {
       return;
     }
-
-    window.console.log(e.target.files[0].name.match(/\.xls|\.xlsx|\.xlsm$/ig));
 
     if (e.target.files[0].name.match(/\.xls|\.xlsx|\.xlsm/ig) === null) {
       this.alert("请上传excel文件");
@@ -47,26 +46,25 @@ class App extends React.Component {
   public read(data: any) {
 
     try {
-      this.workBook = XLSX.read(data, {type: 'array', bookSheets: true, cellHTML: true});
+      this.workBook = XLSX.read(data, {type: 'array'});
     } catch (error) {
       this.alert("无法识别excel文件")
       return;
     }
 
-    window.console.log(JSON.stringify(this.workBook))
-
     this.sheetNames=  this.workBook.SheetNames ? this.workBook.SheetNames : [];
+
+    const sheetsDdata: any[] = [];
 
     this.workBook.SheetNames.forEach((sheetName) => {
       const formulae = XLSX.utils.sheet_to_json(this.workBook.Sheets[sheetName]);
-      
-      window.console.log(formulae)
-
+      sheetsDdata[sheetName] = formulae;
 		});
 
     this.setState({
       sheetNames: this.sheetNames,
-      workBook: this.workBook
+      sheetsData: sheetsDdata,
+      workBook: this.workBook,
     });
   }
 
