@@ -1,28 +1,39 @@
+import { Button, Divider ,Layout, message, Table } from 'antd';
 import * as React from 'react';
-import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import * as XLSX from 'xlsx';
 import './App.css';
-import logo from './logo.svg';
 
-class App extends React.Component {
+interface IappState {
+      dataSource: any[],
+      definition: any[],
+      sheetNames: any[],
+      sheetsData: any,
+      workBook: any,
+}
 
+class App extends React.Component<{}, IappState> {
+
+  private inputRef: any;
   private workBook: XLSX.WorkBook;
   private sheetNames: string[] = [];
 
   public constructor(props: any) {
     super(props)
+    this.onButtonClick = this.onButtonClick.bind(this);
     this.onChange = this.onChange.bind(this);
 
     this.state = {
+      dataSource: [],
+      definition: [],
       sheetNames: [],
       sheetsData: null,
       workBook: null,
     }
   }
 
-  public alert(message: string) {
-    toast(message);
+  public alert(msg: string) {
+    message.error(msg);
   }
 
   public onChange(e: any) {
@@ -32,7 +43,7 @@ class App extends React.Component {
     }
 
     if (e.target.files[0].name.match(/\.xls|\.xlsx|\.xlsm/ig) === null) {
-      this.alert("请上传excel文件");
+      this.alert("请上传excel文件");
       return;
     }
 
@@ -59,30 +70,84 @@ class App extends React.Component {
     this.workBook.SheetNames.forEach((sheetName) => {
       const formulae = XLSX.utils.sheet_to_json(this.workBook.Sheets[sheetName]);
       sheetsDdata[sheetName] = formulae;
-		});
+    });
+
+    const definition: object[] = [] ;
+
+    for (const k in sheetsDdata[this.workBook.SheetNames[0]][0]) {
+      if (sheetsDdata[this.workBook.SheetNames[0]][0].hasOwnProperty(k)) {
+
+        const v = sheetsDdata[this.workBook.SheetNames[0]][0][k];
+        const a: object = {};
+
+        Object.defineProperties(a, {
+          'dataIndex': {
+            enumerable: true,
+            value: k
+          },
+          'key': {
+            enumerable: true,
+            value: k
+          },
+          'title': {
+            enumerable: true,
+            value: v
+          }
+        });
+
+        definition.push(a);
+      }
+    }
+
+sheetsDdata[this.workBook.SheetNames[0]].forEach((e: any, i: any) => {
+  e.key = i;
+});
+
+    // const definition = sheetsDdata[this.workBook.SheetNames[0]][0].map((value: any, index: any) => {
+    //   return {
+    //     dataIndex: index,
+    //     key: index,
+    //     title: value
+    //   }
+    // });
+
+    window.console.log(definition[0]);
+
+    // window.console.log(sheetsDdata[this.workBook.SheetNames[0]].slice(1));
 
     this.setState({
+      dataSource: sheetsDdata[this.workBook.SheetNames[0]].slice(1),
+      definition,
       sheetNames: this.sheetNames,
       sheetsData: sheetsDdata,
       workBook: this.workBook,
     });
   }
 
+  public onButtonClick() {
+    this.inputRef.click()
+  }
+
+  public componentDidCatch(e: any) {
+    window.console.log(e);
+  }
+
   public render() {
+
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">上传 Excel</h1>
-        </header>
-        <p className="App-intro"> <input type="file" onChange={ this.onChange } /></p>
-
-        <div>
-          { this.sheetNames.length > 0 &&  this.sheetNames.map((sheet, k) => (<p key={k}>{sheet}</p>)) }
-        </div>
-
-        <ToastContainer />
-      </div>
+      <Layout className="App">
+        <Layout.Content className="inner-container">
+          <header className="App-header">
+            <h1 className="App-title">上传 Excel</h1>
+          </header>
+          <div>
+            <Button type="primary" onClick={this.onButtonClick}>选择Excel文件</Button>
+            <input style={{ display: 'none' }} ref={r => this.inputRef = r} type="file" onChange={this.onChange} />
+          </div>
+          <Divider dashed={true} />
+          <Table dataSource={ this.state.dataSource } columns={ this.state.definition } rowKey='key'/>
+        </Layout.Content>
+      </Layout>
     );
   }
 }
