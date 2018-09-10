@@ -26,7 +26,6 @@ class Redlist extends React.Component {
 
         const target = e.target;
 
-
         if (target.files && target.files.length === 0) {
             return;
         }
