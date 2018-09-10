@@ -1,27 +1,30 @@
-let loading: boolean = false;
-let arrayBuffer: ArrayBuffer;
+import * as XLSX from 'xlsx';
 
-const onFileLoaded = (e: any) => {
-    loading = false;
+const loadExcel = (file: File | null): Promise<any> => {
 
-    try {
-       arrayBuffer = e.target.result;
-    } catch (error) {
-       arrayBuffer = new ArrayBuffer(0);
+    if (file == null) {
+        return new Promise((res, reject) => {
+            return reject("文件不能为空");
+        });
     }
+
+    return new Promise((resolve, reject) => {
+
+        const fileReader = new FileReader();
+
+        fileReader.onloadend = (e: any) => {
+            const worker = arrayBuffer2Excel(e.target.result);
+            return resolve(worker);
+        }
+
+        fileReader.onerror = reject;
+        fileReader.readAsArrayBuffer(file);
+    });
 }
 
-const loadExcel = (file: File): any => {
-    const reader = new FileReader();
-    reader.onload = onFileLoaded;
-
-    loading = true;
-    reader.readAsArrayBuffer(file);
+const arrayBuffer2Excel = (buffer: ArrayBuffer) => {
+    const worker = XLSX.read(buffer, { type: 'buffer'});
+    return worker;
 }
 
-
-// class Loader() {
-//     public constructor: boolean () {
-//         return true;
-//     }
-// }
+export { loadExcel };

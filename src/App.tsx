@@ -1,6 +1,5 @@
 import { Button, Divider ,Layout, message, Table } from 'antd';
 import * as React from 'react';
-import 'react-toastify/dist/ReactToastify.css';
 import * as XLSX from 'xlsx';
 import './App.css';
 
