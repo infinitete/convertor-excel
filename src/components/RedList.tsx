@@ -1,4 +1,4 @@
-import { Button, Divider, Layout, notification, Table, Tabs } from 'antd';
+import { Button, Layout, notification, Table, Tabs } from 'antd';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import {
@@ -8,21 +8,35 @@ import {
  interface IState {
      columns: any[],
      dataSource: any[]
+     currentSheet: string|null
  }
 
 class Redlist extends React.Component<{}, IState> {
 
+    private formRef: HTMLFormElement | null;
     private inputRef: HTMLInputElement | null;
+    private tabsRef: any;
 
     public constructor(props: any) {
         super(props);
         this.onButtonClick = this.onButtonClick.bind(this);
         this.onChange = this.onChange.bind(this);
+        this.onRow = this.onRow.bind(this);
+        this.onTabsChange = this.onTabsChange.bind(this);
+        this.close = this.close.bind(this);
 
         this.state = {
             columns: [],
+            currentSheet: null,
             dataSource: []
         };
+    }
+
+    public shouldComponentUpdate(nextProps: any, nextState: IState): boolean {
+
+        window.console.log(nextState)
+
+        return true;
     }
 
     public onButtonClick() {
@@ -52,11 +66,43 @@ class Redlist extends React.Component<{}, IState> {
             return;
         }
 
-        loadExcel(file).then((data: any) => this.setState(data) );
+        e.target.files = null;
+
+        loadExcel(file).then((data: any) => this.setState(data));
+    }
+
+    public onRow(record: any) {
+        return {
+            onClick: (event: any) => this.onRowClick(record)
+        }
+    }
+
+    public onRowClick(e: any) {
+        window.console.log(e)
+    }
+
+    public rowKey(record: any): string {
+        return (Math.random() * Math.random()).toString(2);
+    }
+
+    public onTabsChange(activeKey: any) {
+        window.console.log(activeKey, this.state.currentSheet);
+    }
+
+    public close() {
+        this.setState({
+            columns: [],
+            currentSheet: null,
+            dataSource: []
+        });
+
+        if (this.formRef != null) {
+            this.formRef.reset();
+        }
     }
 
     public render() {
- 
+
         const columns = this.state.columns;
         const dataSource = this.state.dataSource;
 
@@ -65,25 +111,35 @@ class Redlist extends React.Component<{}, IState> {
 
         for (const key in columns) {
             if (columns[key] != null) {
-                window.console.log(columns[key])
-                views.push(<Tabs.TabPane tab={key} key={i}>
-                    <Table key={i} dataSource={ dataSource[key] } columns={ columns[key] } />
+                views.push(<Tabs.TabPane tab={key} key={key}>
+                    <Table
+                    key={i++}
+                    dataSource={ dataSource[key] }
+                    columns={ columns[key] }
+                    onRow= { this.onRow }
+                    rowKey={ this.rowKey }/>
                 </Tabs.TabPane>);
-
-                i++;
             }
         }
 
+      const tabs = views.length > 0 ? (<Tabs ref={ r => this.tabsRef = r } tabPosition="top" onChange={this.onTabsChange} animated={true}>{views}</Tabs>) : null;
+        const closer = views.length > 0
+            ?
+            <div style={{ position: 'fixed', right: 24, top: 24 }}><Button shape="circle" type="primary" size="small" onClick={this.close} icon="close" /></div>
+            : null;
+
       return (<Layout className="App">
-        <Layout.Content className="inner-container">
-          <div>
-            <Button type="primary" onClick={this.onButtonClick}>选择Excel文件</Button>
-            <Button style={{ marginLeft: '1em' }} type="primary"><Link to="/">返回</Link></Button>
-            <input style={{ display: 'none' }} ref={r => this.inputRef = r} type="file" onChange={this.onChange} />
-          </div>
-          <Divider dashed={true} />
-          <Tabs defaultActiveKey="1" tabPosition="bottom">{views}</Tabs>
-        </Layout.Content>
+          <Layout.Content className="inner-container">
+              <div style={{ display: this.state.dataSource.length === 0 ? 'block' : 'none' }}>
+                  <Button type="primary" onClick={this.onButtonClick}>选择Excel文件</Button>
+                  <Button style={{ marginLeft: '1em' }} type="primary"><Link to="/">返回</Link></Button>
+                  <form ref={ r => this.formRef = r }><input style={{ display: 'none' }} ref={r => this.inputRef = r} type="file" onChange={this.onChange} /></form>
+              </div>
+              <div style={{ display: 'block' }}>
+                  { tabs }
+                  { closer }
+              </div>
+          </Layout.Content>
       </Layout>);
     }
 }

@@ -7,9 +7,9 @@ interface IColumn {
 };
 
 /**
- * 
+ *
  * @param file
- * 
+ *
  * @return Promise
  */
 const loadExcel = (file: File | null): Promise<any> => {
@@ -37,8 +37,8 @@ const loadExcel = (file: File | null): Promise<any> => {
 }
 
 /**
- * 
- * @param buffer 
+ *
+ * @param buffer
  */
 const arrayBuffer2Excel = (buffer: ArrayBuffer) => {
     const worker = XLSX.read(buffer, { type: 'buffer'});
@@ -51,9 +51,9 @@ const arrayBuffer2Excel = (buffer: ArrayBuffer) => {
 }
 
 /**
- * 
- * @param data 
- * 
+ *
+ * @param data
+ *
  * @returns { columns, dataSource }
  */
 const withColumns = (data: object) => {
