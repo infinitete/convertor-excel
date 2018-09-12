@@ -58,7 +58,7 @@ const arrayBuffer2Excel = (buffer: ArrayBuffer) => {
  */
 const withColumns = (data: object) => {
 
-    const columns: object[] = [];
+    const columns = {};
 
     for (const key in data) {
         if (data.hasOwnProperty(key)) {

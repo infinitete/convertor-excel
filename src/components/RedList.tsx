@@ -8,7 +8,8 @@ import {
  interface IState {
      columns: any[],
      dataSource: any[]
-     currentSheet: string|null
+     currentSheet: string|null,
+     fileName: string|null
  }
 
 class Redlist extends React.Component<{}, IState> {
@@ -16,6 +17,8 @@ class Redlist extends React.Component<{}, IState> {
     private formRef: HTMLFormElement | null;
     private inputRef: HTMLInputElement | null;
     private tabsRef: any;
+
+    private sessionKey = '__redlist__';
 
     public constructor(props: any) {
         super(props);
@@ -28,15 +31,34 @@ class Redlist extends React.Component<{}, IState> {
         this.state = {
             columns: [],
             currentSheet: null,
-            dataSource: []
+            dataSource: [],
+            fileName: null
         };
     }
 
-    public shouldComponentUpdate(nextProps: any, nextState: IState): boolean {
+    public componentDidMount() {
+        try {
+            const data = window.sessionStorage.getItem(this.sessionKey);
 
-        window.console.log(nextState)
+            if (data != null) {
+                const cache = JSON.parse(data);
 
-        return true;
+                window.console.log(cache);
+
+                this.setState({
+                    columns: cache.columns,
+                    dataSource: cache.dataSource
+                });
+
+                notification.success({
+                    description: '已从您刚才关闭的文件中读取',
+                    message: '读取成功'
+                });
+            }
+
+        } catch (error) {
+            window.console.log(error);
+        }
     }
 
     public onButtonClick() {
@@ -66,7 +88,9 @@ class Redlist extends React.Component<{}, IState> {
             return;
         }
 
-        e.target.files = null;
+        if (file != null) {
+            this.setState({ fileName: file.name });
+        }
 
         loadExcel(file).then((data: any) => this.setState(data));
     }
@@ -90,10 +114,23 @@ class Redlist extends React.Component<{}, IState> {
     }
 
     public close() {
+
+        try {
+            const data = {
+                columns: this.state.columns,
+                dataSource: this.state.dataSource
+            };
+
+            window.sessionStorage.setItem(this.sessionKey, JSON.stringify(data));
+        } catch (exception) {
+            window.console.log(exception)
+        }
+
         this.setState({
             columns: [],
             currentSheet: null,
-            dataSource: []
+            dataSource: [],
+            fileName: null
         });
 
         if (this.formRef != null) {
