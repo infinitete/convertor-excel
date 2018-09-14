@@ -27,6 +27,12 @@
     esutils "^2.0.2"
     js-tokens "^4.0.0"
 
+"@types/hasha@^3.0.0":
+  version "3.0.0"
+  resolved "http://registry.npm.taobao.org/@types/hasha/download/@types/hasha-3.0.0.tgz#5878e307014ee19246ca39203466ddbcbb591670"
+  dependencies:
+    "@types/node" "*"
+
 "@types/history@*":
   version "4.7.0"
   resolved "http://registry.npm.taobao.org/@types/history/download/@types/history-4.7.0.tgz#2fac51050c68f7d6f96c5aafc631132522f4aa3f"
@@ -3284,6 +3290,12 @@ hash.js@^1.0.0, hash.js@^1.0.3:
   dependencies:
     inherits "^2.0.3"
     minimalistic-assert "^1.0.1"
+
+hasha@^3.0.0:
+  version "3.0.0"
+  resolved "http://registry.npm.taobao.org/hasha/download/hasha-3.0.0.tgz#52a32fab8569d41ca69a61ff1a214f8eb7c8bd39"
+  dependencies:
+    is-stream "^1.0.1"
 
 he@1.1.x:
   version "1.1.1"
