@@ -7,7 +7,7 @@ class Navigator extends React.Component {
 
         return <div className="navigator">
             <Button className="nav-button" size="large" type="primary"><Link to="/redlist">红名单</Link></Button>
-            <Button className="nav-button" size="large" type="primary"><Link to="/">失信被执行人</Link></Button>
+            <Button className="nav-button" size="large" type="primary"><Link to="/discred">失信被执行人</Link></Button>
         </div>
     }
 }

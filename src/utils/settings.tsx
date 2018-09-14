@@ -1,6 +1,6 @@
-const host = 'http://58.42.227.138:28220'
+const host = 'http://127.0.0.1:7080'
 const name = 'admin';
-const password = '111111';
+const password = '123456';
 
 export {
     host,

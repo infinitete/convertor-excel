@@ -68,7 +68,7 @@ const withColumns = (data: object) => {
             const element = data[key][0];
             for (const k1 in element) {
                 if (element.hasOwnProperty(k1)) {
-                    const v = element[k1];
+                    // const v = element[k1];
 
                     const def: IColumn = {
                         dataIndex: '',
@@ -77,7 +77,7 @@ const withColumns = (data: object) => {
                     };
 
                     def.dataIndex = k1;
-                    def.title = v;
+                    def.title = k1;
                     def.key = k1;
 
 
@@ -85,7 +85,7 @@ const withColumns = (data: object) => {
                 }
             }
 
-            data[key] = data[key].slice(1);
+            // data[key] = data[key].slice(1);
         }
     };
 
